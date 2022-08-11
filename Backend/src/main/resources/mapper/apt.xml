@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="edu.ssafy.happyhouse.mapper.AptMapper">
+
+	<select id="viewApt" parameterType="String" resultType="HouseInfoDTO">
+		select h.aptCode, h.aptName, h.buildyear, h.dongCode, h.dongName, h.roadName, h.jibun, h.lat, h.lng, si.sidoname, gu.gugunname,
+				(select area from housedeal where aptCode = h.aptCode and no = (select max(no) from housedeal where aptCode = h.aptCode)) area,
+				(select floor from housedeal where aptCode = h.aptCode and no = (select max(no) from housedeal where aptCode = h.aptCode)) floor,
+				(select dealAmount from housedeal where aptCode = h.aptCode and no = (select max(no) from housedeal where aptCode = h.aptCode)) recentPrice
+		from houseinfo h
+		left join sidocode si
+		on left(h.dongcode,2) = left(si.sidocode,2)
+		left join guguncode gu
+		on left(h.dongcode,5) = left(gu.guguncode,5)
+		where h.aptName like concat('%',#{aptName},'%')
+		order by aptName
+	</select>
+	
+	<select id="viewDong" parameterType="String" resultType="HouseInfoDTO">
+		select h.aptCode, h.aptName, h.buildyear, h.dongCode, h.dongName, h.roadName, h.jibun, h.lat, h.lng, si.sidoname, gu.gugunname,
+				(select area from housedeal where aptCode = h.aptCode and no = (select max(no) from housedeal where aptCode = h.aptCode)) area,
+				(select floor from housedeal where aptCode = h.aptCode and no = (select max(no) from housedeal where aptCode = h.aptCode)) floor,
+				(select dealAmount from housedeal where aptCode = h.aptCode and no = (select max(no) from housedeal where aptCode = h.aptCode)) recentPrice
+		from houseinfo h
+		left join sidocode si
+		on left(h.dongcode,2) = left(si.sidocode,2)
+		left join guguncode gu
+		on left(h.dongcode,5) = left(gu.guguncode,5)
+		where h.dongName like concat('%',#{dongName},'%')
+		order by aptName
+	</select>
+	
+	<select id="viewListSiGugunCode" parameterType="String" resultType="HouseInfoDTO">
+		select h.aptCode, h.aptName, h.buildyear, h.dongCode, h.dongName, h.roadName, h.jibun, h.lat, h.lng, si.sidoname, gu.gugunname,
+				(select area from housedeal where aptCode = h.aptCode and no = (select max(no) from housedeal where aptCode = h.aptCode)) area,
+				(select floor from housedeal where aptCode = h.aptCode and no = (select max(no) from housedeal where aptCode = h.aptCode)) floor,
+				(select dealAmount from housedeal where aptCode = h.aptCode and no = (select max(no) from housedeal where aptCode = h.aptCode)) recentPrice
+		from houseinfo h
+		left join sidocode si
+		on left(h.dongcode,2) = left(si.sidocode,2)
+		left join guguncode gu
+		on left(h.dongcode,5) = left(gu.guguncode,5)
+		where sigunguCode = #{siGugunCode}
+		order by aptName
+	</select>
+	
+	<select id="viewListDongCode" parameterType="String" resultType="HouseInfoDTO">
+		select h.aptCode, h.aptName, h.buildyear, h.dongCode, h.dongName, h.roadName, h.jibun, h.lat, h.lng, si.sidoname, gu.gugunname,
+				(select area from housedeal where aptCode = h.aptCode and no = (select max(no) from housedeal where aptCode = h.aptCode)) area,
+				(select floor from housedeal where aptCode = h.aptCode and no = (select max(no) from housedeal where aptCode = h.aptCode)) floor,
+				(select dealAmount from housedeal where aptCode = h.aptCode and no = (select max(no) from housedeal where aptCode = h.aptCode)) recentPrice
+		from houseinfo h
+		left join sidocode si
+		on left(h.dongcode,2) = left(si.sidocode,2)
+		left join guguncode gu
+		on left(h.dongcode,5) = left(gu.guguncode,5)
+		where dongCode = #{dongCode}
+		order by aptName
+	</select>
+	
+	<select id="getSido" resultType="SidoGugunCodeDTO">
+		select left(sidoCode,2) sidoCode, sidoName
+		from sidocode
+		order by sidoCode
+	</select>
+	
+	<select id="getGugunInSido" parameterType="string" resultType="SidoGugunCodeDTO">
+		select left(gugunCode,5) gugunCode, gugunName
+		from guguncode
+		where left(gugunCode,2) = #{sido}
+		order by gugunCode
+	</select>
+	
+	<select id="getDongInGugun" parameterType="string" resultType="HouseInfoDTO">
+		select distinct dongName, dongCode
+		from houseinfo
+		where sigunguCode = #{gugun}
+		order by dongName
+	</select>
+	
+	<select id="searchByAptName" parameterType="String" resultType="HouseInfoDTO">
+		select h.aptCode, h.aptName, h.buildyear, h.dongCode, h.dongName, h.roadName, h.jibun, h.lat, h.lng, si.sidoname, gu.gugunname,
+				(select area from housedeal where aptCode = h.aptCode and no = (select max(no) from housedeal where aptCode = h.aptCode)) area,
+				(select floor from housedeal where aptCode = h.aptCode and no = (select max(no) from housedeal where aptCode = h.aptCode)) floor,
+				(select dealAmount from housedeal where aptCode = h.aptCode and no = (select max(no) from housedeal where aptCode = h.aptCode)) recentPrice
+		from houseinfo h
+		left join sidocode si
+		on left(h.dongcode,2) = left(si.sidocode,2)
+		left join guguncode gu
+		on left(h.dongcode,5) = left(gu.guguncode,5)
+		where aptName = #{aptName}
+		and dongCode = #{dongCode}
+		order by aptName
+	</select>
+	
+	<select id="searchAptDeal" parameterType="String" resultType="HouseDealDTO">
+		select dealYear, dealMonth, dealDay, dealAmount, area, floor
+		from housedeal
+		where aptCode = #{aptCode}
+		order by no desc
+	</select>
+	
+	<select id="getSubway" resultType="SubwayDTO">
+		select lat, lng
+		from subway
+	</select>
+	
+	<select id="findSubway" parameterType="SubwayDTO" resultType="String">
+		select station
+		from subway
+		where lat = #{lat} and lng = #{lng}
+		limit 1
+	</select>
+	
+	<select id="getfaclType" resultType="FacilityDTO">
+		select faclTyCd, faclTyName
+		from facility
+		order by faclTyNo
+	</select>
+	
+</mapper>
